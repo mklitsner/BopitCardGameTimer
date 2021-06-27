@@ -71,7 +71,7 @@ function draw(){
  imageMode(CENTER)
  let fps = frameRate();
  fill(255)  
- text(fps, width/2, height/2);
+ //text(fps, width/2, height/2);
 }
 
 let beatTime
