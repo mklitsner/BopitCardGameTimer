@@ -25,13 +25,13 @@ let bkgrnd03Img
 let timerLengthSetting
 
 function preload(){
-  print("v"+0.2)
+  print("v"+0.3)
   getAudioContext().suspend();
  bopItImg = loadImage('assets/layerAssets/BopitCardGameLayer_0002_Layer-2.png');
  bkgrnd01Img = loadImage("assets/layerAssets/BopitCardGameLayer_0003_Layer-1.png");
  bkgrnd02Img = loadImage('assets/layerAssets/BopitCardGameLayer_0001_Layer-3.png');
  bkgrnd03Img = loadImage('assets/layerAssets/BopitCardGameLayer_0000_Layer-4.png');
-//  beatFile =loadSound("assets/Beats loop.ogg");
+ beatFile =loadSound("assets/Beats loop.mp3");
 
 //  scream1 =loadSound('assets/scream/VO_Die_01.ogg');
 //  scream2 =loadSound('assets/scream/VO_Die_02.ogg');
@@ -53,7 +53,7 @@ function setup (){
   amplitude = new p5.Amplitude(0.8);
   cnvScale =height/bkgrnd01Img.height
   goToTimer()
-  // beatDuration=beatFile.duration();
+  beatDuration=beatFile.duration();
   eScale=500;
   timerLengthSetting=1
 
@@ -94,8 +94,8 @@ function startTimer(){
   if(mouseIsPressed){
     if(dist(width/2,height/2,mouseX,mouseY)<eScale*cnvScale*0.5){
       Pressed()
-      // beatTime=int(Math.random()*10+5) * beatDuration
-      beatTime = int(Math.random()*10+5)
+      beatTime=int(Math.random()*10+5) * beatDuration
+      //beatTime = int(Math.random()*10+5)
       state = "timerRunning"
       looped()
     }
@@ -111,8 +111,8 @@ let speedupTime = 5000
 function timerRunningLooped(){
   
   if(IsLooping){
-    // beatFile.loop()
-    // beatFile.rate(1)
+    beatFile.loop()
+    beatFile.rate(1)
     IsLooping=false
     startTime = millis()
   }
@@ -121,13 +121,13 @@ function timerRunningLooped(){
 
   print(timeleft)
 
-  // if(timeleft<5){
-  //   if(timeleft<2){
-  //     beatFile.rate(2)
-  //   }else{
-  //     beatFile.rate(1.5)
-  //   }
-  // }
+  if(timeleft<5){
+    if(timeleft<2){
+      beatFile.rate(2)
+    }else{
+      beatFile.rate(1.5)
+    }
+  }
   if(timeleft<=0){
     state="timesUp"
     stopTimer()
@@ -135,7 +135,7 @@ function timerRunningLooped(){
 }
 
 function stopTimer(){
-  // beatFile.stop()
+  beatFile.stop()
 }
 
 function playScream(){
