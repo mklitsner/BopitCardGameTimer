@@ -41,6 +41,7 @@ function preload(){
 }
 
 function setup (){
+  print("v"+0.1)
   var cnv =createCanvas (windowWidth, windowHeight);
   cnv.mousePressed(enableSound);
   menubutton = createButton('Menu');
