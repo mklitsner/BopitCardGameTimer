@@ -25,6 +25,7 @@ let bkgrnd03Img
 let timerLengthSetting
 
 function preload(){
+  getAudioContext().suspend();
  bopItImg = loadImage('assets/layerAssets/BopitCardGameLayer_0002_Layer-2.png');
  bkgrnd01Img = loadImage("assets/layerAssets/BopitCardGameLayer_0003_Layer-1.png");
  bkgrnd02Img = loadImage('assets/layerAssets/BopitCardGameLayer_0001_Layer-3.png');
@@ -53,7 +54,7 @@ function setup (){
   beatDuration=beatFile.duration();
   eScale=500;
   timerLengthSetting=1
-  getAudioContext().suspend();
+
 
 }
 
@@ -163,6 +164,7 @@ IsLooping = true
 
 function enableSound(){
   userStartAudio();
+  getAudioContext().resume()
 }
 
 function windowResized() {
