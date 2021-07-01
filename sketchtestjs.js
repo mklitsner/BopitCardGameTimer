@@ -29,13 +29,13 @@ function preload(){
  bkgrnd01Img = loadImage("assets/layerAssets/BopitCardGameLayer_0003_Layer-1.png");
  bkgrnd02Img = loadImage('assets/layerAssets/BopitCardGameLayer_0001_Layer-3.png');
  bkgrnd03Img = loadImage('assets/layerAssets/BopitCardGameLayer_0000_Layer-4.png');
- beatFile = loadSound("assets/Beats loop.ogg");
+ beatSound = loadSound("assets/Beats loop.ogg");
 scream1 =loadSound('assets/scream/VO_Die_01.ogg');
 scream2 =loadSound('assets/scream/VO_Die_02.ogg');
 scream3 =loadSound('assets/scream/VO_Die_03.ogg');
 scream4 =loadSound('assets/scream/VO_Die_04.ogg');
 
-screamFiles=[scream1,scream2,scream3,scream4]
+screamSounds=[scream1,scream2,scream3,scream4]
 
 }
 
@@ -46,7 +46,7 @@ function setup (){
   backbutton.attribute('hidden','')
   amplitude = new p5.Amplitude(0.8);
   cnvScale =height/bkgrnd01Img.height
-  beatDuration=beatFile.duration();
+  beatDuration=beatSound.duration();
   eScale=500;
   timerLengthSetting=1
   getAudioContext().suspend();
