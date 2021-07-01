@@ -55,7 +55,7 @@ function setup() {
   var cnv = createCanvas(windowWidth, windowHeight);
   cnv.mousePressed(enableSound);
 
-  link = createA('https://bopitforgood.com/', 'more Bop It stuff','_blank');
+  link = createA('https://bopitforgood.com/', 'see more from the inventor of Bop It','_blank');
   link.attribute('hidden','')
   link.style('color', '#ff0000')
   link.attribute('target',)
