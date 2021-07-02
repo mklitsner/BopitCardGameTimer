@@ -26,7 +26,7 @@ let speedSlider
 let timerLengthSetting
 
 function preload() {
-  print("v" + 0.6)
+  print("v" + 0.7)
   getAudioContext().suspend();
   bopItImg = loadImage('assets/layerAssets/BopitCardGameLayer_0002.png');
   bkgrnd01Img = loadImage("assets/layerAssets/BopitCardGameLayer_0003_Layer-1.png");
@@ -268,7 +268,7 @@ function windowResized() {
   if (windowWidth < bkgrnd01Img.width * cnvScale) {
     buttonPos = 0
   }
-  menubutton.position(0.5 * width, bkgrnd01Img.height*cnvScale- menubutton.height*3);
+  menubutton.position(0.5 * width, height*0.85);
   menubutton.center('horizontal')
   speedSlider.position(0.5 * width, 0.5 * height)
   speedSlider.style('width', .5 * bkgrnd01Img.width + 'px')
