@@ -26,7 +26,7 @@ let speedSlider
 let timerLengthSetting
 
 function preload() {
-  print("v" + 0.7)
+  print("v" + 0.8)
   getAudioContext().suspend();
   bopItImg = loadImage('assets/layerAssets/BopitCardGameLayer_0002.png');
   bkgrnd01Img = loadImage("assets/layerAssets/BopitCardGameLayer_0003_Layer-1.png");
@@ -216,6 +216,7 @@ function goToMenu() {
   //slider.style('width', 10*bkgrnd01Img.width );
   stopTimer();
   menubutton.mousePressed(goToTimer)
+  menubutton.position(0.5 * width, 0.85*height)
 
 }
 function goToTimer() {
@@ -227,6 +228,7 @@ function goToTimer() {
   speedSlider.attribute('hidden', '')
   printDebug(link)
   menubutton.mousePressed(goToMenu)
+  menubutton.position(0.5 * width, 0.85*height)
 }
 
 
@@ -264,11 +266,11 @@ function enableSound() {
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
-  buttonPos = width - bkgrnd01Img.width * cnvScale
-  if (windowWidth < bkgrnd01Img.width * cnvScale) {
-    buttonPos = 0
-  }
-  menubutton.position(0.5 * width, height*0.85);
+  // buttonPos = width - bkgrnd01Img.width * cnvScale
+  // if (windowWidth < bkgrnd01Img.width * cnvScale) {
+  //   buttonPos = 0
+  // }
+  menubutton.position(0.5 * width, 0.85*height);
   menubutton.center('horizontal')
   speedSlider.position(0.5 * width, 0.5 * height)
   speedSlider.style('width', .5 * bkgrnd01Img.width + 'px')
