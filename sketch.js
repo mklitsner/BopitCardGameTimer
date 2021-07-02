@@ -2,7 +2,7 @@
 
 let state = "timerReady"
 let page = "TIMER"
-let isDebug= true;
+let isDebug = false;
 
 
 //bug: https://github.com/processing/p5.js-sound/issues/506
@@ -19,7 +19,6 @@ let beatSound
 
 //elements
 let menubutton
-let backbutton
 let link
 let speedSlider
 
@@ -27,9 +26,9 @@ let speedSlider
 let timerLengthSetting
 
 function preload() {
-  print("v" + 0.5)
+  print("v" + 0.6)
   getAudioContext().suspend();
-  bopItImg = loadImage('assets/layerAssets/BopitCardGameLayer_0002_Layer-2.png');
+  bopItImg = loadImage('assets/layerAssets/BopitCardGameLayer_0002.png');
   bkgrnd01Img = loadImage("assets/layerAssets/BopitCardGameLayer_0003_Layer-1.png");
   bkgrnd02Img = loadImage('assets/layerAssets/BopitCardGameLayer_0001_Layer-3.png');
   bkgrnd03Img = loadImage('assets/layerAssets/BopitCardGameLayer_0000_Layer-4.png');
@@ -55,17 +54,23 @@ function setup() {
   var cnv = createCanvas(windowWidth, windowHeight);
   cnv.mousePressed(enableSound);
 
-  link = createA('https://bopitforgood.com/', 'see more from the inventor of Bop It','_blank');
-  link.attribute('hidden','')
-  link.style('color', '#ff0000')
+  link = createA('https://bopitforgood.com/', 'see more from the inventor of Bop It', '_blank');
+  link.attribute('hidden', '')
   link.attribute('target',)
+  link.addClass("link")
+
   menubutton = createButton('Menu');
-  backbutton = createButton('Back')
+  menubutton.addClass("button")
   menubutton.mousePressed(goToMenu)
-  backbutton.mousePressed(goToTimer)
-  backbutton.attribute('hidden', '')
-  speedSlider=createSlider(sliderMin,sliderMin+sliderStep*2,sliderMin+sliderStep,sliderStep)
- 
+
+  if(isDebug){
+    sliderMin = 1
+    sliderStep = 1
+  }
+
+  speedSlider = createSlider(sliderMin, sliderMin + sliderStep * 2, sliderMin + sliderStep, sliderStep)
+  speedSlider.addClass("slider")
+  printDebug(speedSlider)
 
   amplitude = new p5.Amplitude(0.8);
   cnvScale = height / bkgrnd01Img.height
@@ -73,19 +78,22 @@ function setup() {
   beatDuration = beatSound.duration();
   eScale = 500;
   timerLengthSetting = 1
-
-
+  ProScaleImage(bkgrnd01Img, 1)
+  speedSlider.style('width', .5 * bkgrnd01Img.width + 'px')
+  windowResized()
 }
 
 var cnvScale
 var buttonPos
 function draw() {
 
-  background(255) 
+  background(255)
   ProScaleImage(bkgrnd01Img, 1)
   buttonPos = width - bkgrnd01Img.width * cnvScale
-  if(width<bkgrnd01Img.width*cnvScale)
-  buttonPos=0
+  if (windowWidth < bkgrnd01Img.width * cnvScale) {
+    buttonPos = 0
+  }
+
   cnvScale = height / bkgrnd01Img.height
   let bopitSize = 1;
 
@@ -99,14 +107,16 @@ function draw() {
       timerRunningLooped()
     } else if (state == "timesUp") {
       playScream()
+    } else if (state == "endPhrase") {
+      redFade()
     }
 
-    scaleImage(bkgrnd02Img, cnvScale)
-    scaleImage(bkgrnd03Img, cnvScale)
-    scaleImage(bopItImg, cnvScale * bopitSize)
+    // scaleImage(bkgrnd02Img, cnvScale)
+    // scaleImage(bkgrnd03Img, cnvScale)
+    scaleImage(bopItImg, cnvScale * bopitSize / 2)
 
   } else if (page == "MENU") {
-speedText()
+    speedText()
 
   }
 
@@ -121,7 +131,7 @@ function startTimer() {
       bopItPressed()
       var timerMinPerc = 0.5
       var timerMax = speedSlider.value()
-      var timerMin = speedSlider.value()*timerMinPerc
+      var timerMin = speedSlider.value() * timerMinPerc
       beatTime = int(Math.random() * (timerMax - timerMin) + timerMin) * beatDuration
       // beatTime = int(Math.random()*10+5)
       state = "timerRunning"
@@ -170,6 +180,7 @@ function playScream() {
   printDebug("scream " + num)
   screamSounds[num].play()
   screamSounds[num].onended(playFailPhrase)
+  fade = 255
 }
 
 function playFailPhrase() {
@@ -177,61 +188,69 @@ function playFailPhrase() {
   printDebug("fail " + num)
   failSounds[num].play()
   failSounds[num].onended(function () {
-  state = "timerReady"
+    state = "timerReady"
   })
+}
+
+let fade = 255
+function redFade() {
+  rect(0, 0, width, height)
+  fill(255, 0, 0, fade)
+  if (fade > 0) {
+    fade = fade-10
+  }
 }
 
 function goToMenu() {
   page = "MENU"
   state = "menu"
-  printDebug("menu Pressed")
-  menubutton.attribute('hidden', '')
-  backbutton.removeAttribute('hidden')
   link.removeAttribute('hidden')
-  link.position(0.5*width,0.8*height)
+  link.position(0.5 * width, 0.8 * height)
   link.center('horizontal')
+  menubutton.elt.innerHTML = "Back"
+  menubutton.center('horizontal')
+  printDebug(menubutton)
   speedSlider.removeAttribute('hidden')
-  speedSlider.position(0.5*width,0.5*height)
-  speedSlider.style('width',.5*bkgrnd01Img.width+'px')
+  speedSlider.position(0.5 * width, 0.5 * height)
   speedSlider.center('horizontal')
   //slider.style('width', 10*bkgrnd01Img.width );
   stopTimer();
-  backbutton.position(buttonPos, height - backbutton.height);
+  menubutton.mousePressed(goToTimer)
 
 }
 function goToTimer() {
   page = "TIMER"
   state = "timerReady"
-  printDebug("back Pressed")
-  backbutton.attribute('hidden', '')
-  menubutton.removeAttribute('hidden')
+  menubutton.elt.innerHTML = "Menu"
+  menubutton.center('horizontal')
   link.attribute('hidden', '')
   speedSlider.attribute('hidden', '')
   printDebug(link)
-  menubutton.position(buttonPos, height - menubutton.height);
+  menubutton.mousePressed(goToMenu)
 }
 
 
-function speedText(){
+function speedText() {
   let title = 'Timer Duration'
   let setting = 'SHORTEST'
 
-  switch(speedSlider.value()){
+  switch (speedSlider.value()) {
     case sliderMin:
       setting = 'SHORTEST'
       break;
-    case sliderMin+sliderStep:
+    case sliderMin + sliderStep:
       setting = 'NORMAL'
       break;
-      case sliderMin+sliderStep*2:
-        setting = 'LONGEST'
-        break;
+    case sliderMin + sliderStep * 2:
+      setting = 'LONGEST'
+      break;
     default:
   }
 
-fill(255);
-text(title+'\n'+setting, 0.5*width, 0.45*height );
-textAlign(CENTER,CENTER)
+  fill(255);
+  text(title + '\n' + setting, 0.5 * width, 0.35 * height);
+  textSize(30)
+  textAlign(CENTER, CENTER)
 }
 
 function looped() {
@@ -245,15 +264,16 @@ function enableSound() {
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
-
-  
-
-  backbutton.position(0.5 * (buttonPos), height - backbutton.height);
-  menubutton.position(0.5 * (buttonPos), height - menubutton.height);
-  speedSlider.position(0.5*width,0.5*height)
-  speedSlider.style('width',.5*bkgrnd01Img.width+'px')
+  buttonPos = width - bkgrnd01Img.width * cnvScale
+  if (windowWidth < bkgrnd01Img.width * cnvScale) {
+    buttonPos = 0
+  }
+  menubutton.position(0.5 * width, height - menubutton.height * 3);
+  menubutton.center('horizontal')
+  speedSlider.position(0.5 * width, 0.5 * height)
+  speedSlider.style('width', .5 * bkgrnd01Img.width + 'px')
   speedSlider.center('horizontal')
-  link.position(0.5*width,0.8*height)
+  link.position(0.5 * width, 0.8 * height)
   link.center('horizontal')
 }
 
@@ -273,8 +293,8 @@ function bopItPressed() {
 }
 
 
-function printDebug(text){
-  if(isDebug)
-  print(text)
+function printDebug(text) {
+  if (isDebug)
+    print(text)
 }
 
