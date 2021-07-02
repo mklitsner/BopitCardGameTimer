@@ -268,7 +268,7 @@ function windowResized() {
   if (windowWidth < bkgrnd01Img.width * cnvScale) {
     buttonPos = 0
   }
-  menubutton.position(0.5 * width, height - menubutton.height * 3);
+  menubutton.position(0.5 * width, bkgrnd01Img.height*cnvScale- menubutton.height*3);
   menubutton.center('horizontal')
   speedSlider.position(0.5 * width, 0.5 * height)
   speedSlider.style('width', .5 * bkgrnd01Img.width + 'px')
