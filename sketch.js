@@ -27,7 +27,7 @@ let speedSlider
 let timerLengthSetting
 
 function preload() {
-  print("v" + 0.10)
+  print("v" + "0.11")
   getAudioContext().suspend();
   bopItImg = loadImage('assets/layerAssets/BopitCardGameLayer_0002.png');
   bkgrnd01Img = loadImage("assets/layerAssets/BopitCardGameLayer_0003_Layer-1.png");
@@ -134,12 +134,12 @@ let beatTime
 
 function PressTimer() {
   if (mouseIsReleased) {
-    mouseIsReleased=false
     if (dist(width / 2, height / 2, mouseX, mouseY) < eScale * cnvScale * 0.5) {
       bopItPressed()
       if (state == "timerRunning") {
         state = "timerReady"
         stopTimer()
+        mouseIsReleased=false
       } else {
         var timerMinPerc = 0.5
         var timerMax = speedSlider.value()
@@ -148,6 +148,7 @@ function PressTimer() {
         // beatTime = int(Math.random()*10+5)
         state = "timerRunning"
         looped()
+        mouseIsReleased=false
       }
     }
   }
