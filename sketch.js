@@ -139,7 +139,6 @@ function PressTimer() {
       if (state == "timerRunning") {
         state = "timerReady"
         stopTimer()
-        mouseIsReleased=false
       } else {
         var timerMinPerc = 0.5
         var timerMax = speedSlider.value()
@@ -148,8 +147,8 @@ function PressTimer() {
         // beatTime = int(Math.random()*10+5)
         state = "timerRunning"
         looped()
-        mouseIsReleased=false
       }
+      mouseIsReleased=false
     }
   }
 }
