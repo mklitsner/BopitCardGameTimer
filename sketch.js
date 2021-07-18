@@ -2,7 +2,7 @@
 
 let state = "timerReady"
 let page = "TIMER"
-let isDebug = false;
+let isDebug = true;
 
 
 //bug: https://github.com/processing/p5.js-sound/issues/506
@@ -16,6 +16,7 @@ let bkgrnd01Img
 let bkgrnd02Img
 let bkgrnd03Img
 let beatSound
+let cymbalSound
 
 //elements
 let menubutton
@@ -24,16 +25,18 @@ let rules
 let speedSlider
 
 
+
 let timerLengthSetting
 
 function preload() {
-  print("v" + "0.11")
+  print("v" + "0.12")
   getAudioContext().suspend();
   bopItImg = loadImage('assets/layerAssets/BopitCardGameLayer_0002.png');
   bkgrnd01Img = loadImage("assets/layerAssets/BopitCardGameLayer_0003_Layer-1.png");
   bkgrnd02Img = loadImage('assets/layerAssets/BopitCardGameLayer_0001_Layer-3.png');
   bkgrnd03Img = loadImage('assets/layerAssets/BopitCardGameLayer_0000_Layer-4.png');
   beatSound = loadSound("assets/Beats loop.mp3");
+  cymbalSound = loadSound('assets/CymbalShort.mp3');
 
   for (let i = 0; i < 4; i++) {
     var num = i + 1
@@ -131,31 +134,48 @@ function draw() {
 }
 
 let beatTime
-
+let waitTillNextPress=false
 function PressTimer() {
-  if (mouseIsReleased) {
+  if (mouseIsPressed&&!waitTillNextPress) {
     if (dist(width / 2, height / 2, mouseX, mouseY) < eScale * cnvScale * 0.5) {
+      waitTillNextPress=true
       bopItPressed()
       if (state == "timerRunning") {
-        state = "timerReady"
-        stopTimer()
+        Reset()
+        printDebug("TimerRunning Press")
       } else {
-        var timerMinPerc = 0.5
-        var timerMax = speedSlider.value()
-        var timerMin = speedSlider.value() * timerMinPerc
-        beatTime = int(Math.random() * (timerMax - timerMin) + timerMin) * beatDuration
-        // beatTime = int(Math.random()*10+5)
-        state = "timerRunning"
-        looped()
+        StartTimer()
+        printDebug(" NOt TimerRunning Press")
       }
-      mouseIsReleased=false
     }
   }
 }
 
-let mouseIsReleased
 function mouseReleased(){
-  mouseIsReleased = true;
+  waitTillNextPress = false;
+}
+
+function StartTimer(){
+printDebug("CYmbal")
+  cymbalSound.play()
+  var timerMinPerc = 0.5
+  var timerMax = speedSlider.value()
+  var timerMin = speedSlider.value() * timerMinPerc
+  beatTime = int(Math.random() * (timerMax - timerMin) + timerMin) * beatDuration
+  // beatTime = int(Math.random()*10+5)
+  state = "timerRunning"
+  looped()
+}
+
+
+
+
+function Reset(){
+  stopTimer()
+  StartTimer()
+  // if(!mouseIsPressed){
+  //   state = "timerReady"
+  // }
 }
 
 let IsLooping = true
