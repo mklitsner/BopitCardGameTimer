@@ -20,6 +20,7 @@ let beatSound
 //elements
 let menubutton
 let link
+let rules
 let speedSlider
 
 
@@ -58,6 +59,11 @@ function setup() {
   link.attribute('hidden', '')
   link.attribute('target',)
   link.addClass("link")
+
+  rules = createA('rules.html', 'Rules', '_blank');
+  rules.attribute('hidden', '')
+  rules.attribute('target',)
+  rules.addClass("link")
 
   menubutton = createButton('Menu');
   menubutton.addClass("button")
@@ -100,11 +106,12 @@ function draw() {
   if (page == "TIMER") {
 
     if (state == "timerReady") {
-      startTimer();
+      PressTimer();
     } else if (state == "timerRunning") {
       let level = amplitude.getLevel();
       bopitSize = map(level, 0, 1, 0.9, 1.3)
       timerRunningLooped()
+      PressTimer()
     } else if (state == "timesUp") {
       playScream()
     } else if (state == "endPhrase") {
@@ -125,17 +132,21 @@ function draw() {
 
 let beatTime
 
-function startTimer() {
+function PressTimer() {
   if (mouseIsPressed) {
     if (dist(width / 2, height / 2, mouseX, mouseY) < eScale * cnvScale * 0.5) {
       bopItPressed()
-      var timerMinPerc = 0.5
-      var timerMax = speedSlider.value()
-      var timerMin = speedSlider.value() * timerMinPerc
-      beatTime = int(Math.random() * (timerMax - timerMin) + timerMin) * beatDuration
-      // beatTime = int(Math.random()*10+5)
-      state = "timerRunning"
-      looped()
+if(state=="timerRunning"){
+  state = "timerReady"
+}else{
+  var timerMinPerc = 0.5
+  var timerMax = speedSlider.value()
+  var timerMin = speedSlider.value() * timerMinPerc
+  beatTime = int(Math.random() * (timerMax - timerMin) + timerMin) * beatDuration
+  // beatTime = int(Math.random()*10+5)
+  state = "timerRunning"
+  looped()
+}
     }
   }
 }
@@ -207,6 +218,11 @@ function goToMenu() {
   link.removeAttribute('hidden')
   link.position(0.5 * width, 0.8 * height)
   link.center('horizontal')
+
+  rules.removeAttribute('hidden')
+  rules.position(0.5 * width, 0.7 * height)
+  rules.center('horizontal')
+
   menubutton.elt.innerHTML = "Back"
   printDebug(menubutton)
   speedSlider.removeAttribute('hidden')
@@ -224,6 +240,7 @@ function goToTimer() {
   state = "timerReady"
   menubutton.elt.innerHTML = "Menu"
   link.attribute('hidden', '')
+  rules.attribute('hidden', '')
   speedSlider.attribute('hidden', '')
   printDebug(link)
   menubutton.mousePressed(goToMenu)
@@ -277,6 +294,8 @@ function windowResized() {
   speedSlider.center('horizontal')
   link.position(0.5 * width, 0.8 * height)
   link.center('horizontal')
+  rules.position(0.5 * width, 0.7 * height)
+  rules.center('horizontal')
 }
 
 function ProScaleImage(img, scale) {
