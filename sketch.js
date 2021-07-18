@@ -69,7 +69,7 @@ function setup() {
   menubutton.addClass("button")
   menubutton.mousePressed(goToMenu)
 
-  if(isDebug){
+  if (isDebug) {
     sliderMin = 1
     sliderStep = 1
   }
@@ -133,22 +133,29 @@ function draw() {
 let beatTime
 
 function PressTimer() {
-  if (mouseIsPressed) {
+  if (mouseIsReleased) {
+    mouseIsReleased=false
     if (dist(width / 2, height / 2, mouseX, mouseY) < eScale * cnvScale * 0.5) {
       bopItPressed()
-if(state=="timerRunning"){
-  state = "timerReady"
-}else{
-  var timerMinPerc = 0.5
-  var timerMax = speedSlider.value()
-  var timerMin = speedSlider.value() * timerMinPerc
-  beatTime = int(Math.random() * (timerMax - timerMin) + timerMin) * beatDuration
-  // beatTime = int(Math.random()*10+5)
-  state = "timerRunning"
-  looped()
-}
+      if (state == "timerRunning") {
+        state = "timerReady"
+        stopTimer()
+      } else {
+        var timerMinPerc = 0.5
+        var timerMax = speedSlider.value()
+        var timerMin = speedSlider.value() * timerMinPerc
+        beatTime = int(Math.random() * (timerMax - timerMin) + timerMin) * beatDuration
+        // beatTime = int(Math.random()*10+5)
+        state = "timerRunning"
+        looped()
+      }
     }
   }
+}
+
+let mouseIsReleased
+function mouseReleased(){
+  mouseIsReleased = true;
 }
 
 let IsLooping = true
@@ -208,7 +215,7 @@ function redFade() {
   rect(0, 0, width, height)
   fill(255, 0, 0, fade)
   if (fade > 0) {
-    fade = fade-10
+    fade = fade - 10
   }
 }
 
@@ -231,7 +238,7 @@ function goToMenu() {
   //slider.style('width', 10*bkgrnd01Img.width );
   stopTimer();
   menubutton.mousePressed(goToTimer)
-  menubutton.position(0.5 * width, 0.85*height)
+  menubutton.position(0.5 * width, 0.85 * height)
   menubutton.center('horizontal')
 
 }
@@ -244,7 +251,7 @@ function goToTimer() {
   speedSlider.attribute('hidden', '')
   printDebug(link)
   menubutton.mousePressed(goToMenu)
-  menubutton.position(0.5 * width, 0.85*height)
+  menubutton.position(0.5 * width, 0.85 * height)
   menubutton.center('horizontal')
 }
 
@@ -287,7 +294,7 @@ function windowResized() {
   // if (windowWidth < bkgrnd01Img.width * cnvScale) {
   //   buttonPos = 0
   // }
-  menubutton.position(0.5 * width, 0.85*height);
+  menubutton.position(0.5 * width, 0.85 * height);
   menubutton.center('horizontal')
   speedSlider.position(0.5 * width, 0.5 * height)
   speedSlider.style('width', .5 * bkgrnd01Img.width + 'px')
