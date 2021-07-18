@@ -2,7 +2,7 @@
 
 let state = "timerReady"
 let page = "TIMER"
-let isDebug = true;
+let isDebug = false;
 
 
 //bug: https://github.com/processing/p5.js-sound/issues/506
@@ -29,7 +29,7 @@ let speedSlider
 let timerLengthSetting
 
 function preload() {
-  print("v" + "0.12")
+  print("v" + "0.14")
   getAudioContext().suspend();
   bopItImg = loadImage('assets/layerAssets/BopitCardGameLayer_0002.png');
   bkgrnd01Img = loadImage("assets/layerAssets/BopitCardGameLayer_0003_Layer-1.png");
@@ -63,7 +63,7 @@ function setup() {
   link.attribute('target',)
   link.addClass("link")
 
-  rules = createA('rules.html', 'Rules', '_blank');
+  rules = createA('rules.html', 'Rules');
   rules.attribute('hidden', '')
   rules.attribute('target',)
   rules.addClass("link")
@@ -326,7 +326,11 @@ function windowResized() {
 }
 
 function ProScaleImage(img, scale) {
-  image(img, 0.5 * width, 0.5 * height, scale * img.width * height / img.height, scale * height);
+
+    image(img, 0.5 * width, 0.5 * height, scale * img.width * height / img.height, scale * height);
+ 
+    //image(img, 0.5 * width, 0.5 * height, scale * width, scale * img.height * width / img.width);
+  
 }
 
 function scaleImage(img, scale) {
