@@ -27,7 +27,7 @@ let speedSlider
 let timerLengthSetting
 
 function preload() {
-  print("v" + 0.9)
+  print("v" + 0.10)
   getAudioContext().suspend();
   bopItImg = loadImage('assets/layerAssets/BopitCardGameLayer_0002.png');
   bkgrnd01Img = loadImage("assets/layerAssets/BopitCardGameLayer_0003_Layer-1.png");
