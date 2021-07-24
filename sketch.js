@@ -2,7 +2,7 @@
 
 let state = "timerReady"
 let page = "TIMER"
-let isDebug = false;
+let isDebug = true;
 
 
 //bug: https://github.com/processing/p5.js-sound/issues/506
@@ -10,6 +10,7 @@ let isDebug = false;
 //files
 let screamSounds = []
 let failSounds = []
+let failSoundstoPlay=[]
 
 let bopItImg
 let bkgrnd01Img
@@ -23,18 +24,18 @@ let menubutton
 let link
 let rules
 let speedSlider
-
+let spread
 
 
 let timerLengthSetting
 
 function preload() {
-  print("v" + "0.14")
+  print("v" + "0.15")
   getAudioContext().suspend();
   bopItImg = loadImage('assets/layerAssets/BopitCardGameLayer_0002.png');
   bkgrnd01Img = loadImage("assets/layerAssets/BopitCardGameLayer_0003_Layer-1.png");
-  bkgrnd02Img = loadImage('assets/layerAssets/BopitCardGameLayer_0001_Layer-3.png');
-  bkgrnd03Img = loadImage('assets/layerAssets/BopitCardGameLayer_0000_Layer-4.png');
+  //bkgrnd02Img = loadImage('assets/layerAssets/BopitCardGameLayer_0001_Layer-3.png');
+  //bkgrnd03Img = loadImage('assets/layerAssets/BopitCardGameLayer_0000_Layer-4.png');
   beatSound = loadSound("assets/Beats loop.mp3");
   cymbalSound = loadSound('assets/CymbalShort.mp3');
 
@@ -44,11 +45,15 @@ function preload() {
     printDebug(screamSounds[i])
   }
 
-  for (let i = 0; i < 15; i++) {
-    var num = i + 1
+  spread= int(Math.random()*10)
+
+
+  for (let i = 0; i < 5; i++) {
+    var num = i + spread +1
     failSounds[i] = loadSound("assets/failPhrases/failPhrase" + num + ".mp3")
     printDebug(failSounds[i])
   }
+  printDebug("spread is " +spread)
 
 }
 
@@ -222,12 +227,22 @@ function playScream() {
 }
 
 function playFailPhrase() {
-  var num = int(Math.random() * 15)
+  printDebug("fail to play length " +failSoundstoPlay.length)
+  printDebug("fail length " +failSounds.length)
+  if(failSoundstoPlay.length==0){
+    for (let i = 0; i < failSounds.length; i++) {
+      failSoundstoPlay.push(failSounds[i])
+    }
+  }
+  printDebug("fail to play length " +failSoundstoPlay.length)
+  var num = int(Math.random() * failSoundstoPlay.length)
   printDebug("fail " + num)
-  failSounds[num].play()
-  failSounds[num].onended(function () {
+  failSoundstoPlay[num].play()
+  failSoundstoPlay[num].onended(function () {
     state = "timerReady"
   })
+  failSoundstoPlay.splice(num,1)
+  printDebug("fail to play length " +failSoundstoPlay.length)
 }
 
 let fade = 255
