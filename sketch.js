@@ -21,6 +21,7 @@ let cymbalSound
 
 //elements
 let menubutton
+let stopitButton
 let link
 let rules
 let speedSlider
@@ -30,7 +31,7 @@ let spread
 let timerLengthSetting
 
 function preload() {
-  print("v" + "0.15")
+  print("v" + "0.16")
   getAudioContext().suspend();
   bopItImg = loadImage('assets/layerAssets/BopitCardGameLayer_0002.png');
   bkgrnd01Img = loadImage("assets/layerAssets/BopitCardGameLayer_0003_Layer-1.png");
@@ -68,14 +69,21 @@ function setup() {
   link.attribute('target',)
   link.addClass("link")
 
-  rules = createA('rules.html', 'Rules');
+  rules = createA(
+    'https://www.dropbox.com/sh/azsxioxac498ih8/AACA3hckZ6Kw4Uhp-TrViLJwa?dl=0'
+  , 'Rules');
   rules.attribute('hidden', '')
   rules.attribute('target',)
   rules.addClass("link")
 
-  menubutton = createButton('Menu');
+  menubutton = createButton('Menu')
   menubutton.addClass("button")
+  menubutton.show()
   menubutton.mousePressed(goToMenu)
+
+  stopitButton = createButton('Stop It')
+  stopitButton.addClass("button")
+  stopitButton.mousePressed(stopItPressed)
 
   if (isDebug) {
     sliderMin = 1
@@ -124,10 +132,9 @@ function draw() {
       playScream()
     } else if (state == "endPhrase") {
       redFade()
+      menubutton.show()
     }
 
-    // scaleImage(bkgrnd02Img, cnvScale)
-    // scaleImage(bkgrnd03Img, cnvScale)
     scaleImage(bopItImg, cnvScale * bopitSize / 2)
 
   } else if (page == "MENU") {
@@ -147,9 +154,11 @@ function PressTimer() {
       bopItPressed()
       if (state == "timerRunning") {
         Reset()
+        HideMenu()
         printDebug("TimerRunning Press")
       } else {
         StartTimer()
+        HideMenu()
         printDebug(" NOt TimerRunning Press")
       }
     }
@@ -167,20 +176,18 @@ printDebug("CYmbal")
   var timerMax = speedSlider.value()
   var timerMin = speedSlider.value() * timerMinPerc
   beatTime = int(Math.random() * (timerMax - timerMin) + timerMin) * beatDuration
-  // beatTime = int(Math.random()*10+5)
+
   state = "timerRunning"
   looped()
 }
 
-
-
-
 function Reset(){
   stopTimer()
   StartTimer()
-  // if(!mouseIsPressed){
-  //   state = "timerReady"
-  // }
+}
+
+function HideMenu(){
+  menubutton.hide()
 }
 
 let IsLooping = true
@@ -215,6 +222,13 @@ function timerRunningLooped() {
 
 function stopTimer() {
   beatSound.stop()
+}
+
+function stopItPressed(){
+  stopTimer();
+  menubutton.show()
+  state = "timerReady"
+
 }
 
 function playScream() {
@@ -257,6 +271,8 @@ function redFade() {
 function goToMenu() {
   page = "MENU"
   state = "menu"
+
+  menubutton.hide()
   link.removeAttribute('hidden')
   link.position(0.5 * width, 0.8 * height)
   link.center('horizontal')
@@ -265,29 +281,36 @@ function goToMenu() {
   rules.position(0.5 * width, 0.7 * height)
   rules.center('horizontal')
 
-  menubutton.elt.innerHTML = "Back"
+  stopitButton.elt.innerHTML = "Back"
   printDebug(menubutton)
   speedSlider.removeAttribute('hidden')
   speedSlider.position(0.5 * width, 0.5 * height)
   speedSlider.center('horizontal')
-  //slider.style('width', 10*bkgrnd01Img.width );
+
   stopTimer();
-  menubutton.mousePressed(goToTimer)
-  menubutton.position(0.5 * width, 0.85 * height)
-  menubutton.center('horizontal')
+  stopitButton.mousePressed(goToTimer)
+  stopitButton.position(0.5 * width, 0.85 * height)
+  stopitButton.center('horizontal')
 
 }
+
+
 function goToTimer() {
   page = "TIMER"
   state = "timerReady"
-  menubutton.elt.innerHTML = "Menu"
+  stopitButton.elt.innerHTML = "Stop it"
   link.attribute('hidden', '')
   rules.attribute('hidden', '')
   speedSlider.attribute('hidden', '')
   printDebug(link)
+  menubutton.show()
   menubutton.mousePressed(goToMenu)
-  menubutton.position(0.5 * width, 0.85 * height)
+  menubutton.position(0.5 * width, 0.15 * height)
   menubutton.center('horizontal')
+  stopitButton.mousePressed(stopItPressed)
+  stopitButton.position(0.5 * width, 0.85 * height)
+  stopitButton.center('horizontal')
+
 }
 
 
@@ -325,12 +348,10 @@ function enableSound() {
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
-  // buttonPos = width - bkgrnd01Img.width * cnvScale
-  // if (windowWidth < bkgrnd01Img.width * cnvScale) {
-  //   buttonPos = 0
-  // }
-  menubutton.position(0.5 * width, 0.85 * height);
+  menubutton.position(0.5 * width, 0.15 * height);
   menubutton.center('horizontal')
+  stopitButton.position(0.5 * width, 0.85 * height);
+  stopitButton.center('horizontal')
   speedSlider.position(0.5 * width, 0.5 * height)
   speedSlider.style('width', .5 * bkgrnd01Img.width + 'px')
   speedSlider.center('horizontal')
