@@ -231,8 +231,8 @@ function SetNewPhrase(){
   const isGenerateRandom = blankSlider.value() == blankMin;
   if(isGenerateRandom){
   var index = int(random(0,phrasesArray.length))
-  newPhrase= "' "+phrasesArray[index]
-  phraseText.elt.innerHTML = phraseIntro+newPhrase+"! '"
+  newPhrase= '" '+phrasesArray[index]
+  phraseText.elt.innerHTML = phraseIntro+newPhrase+'! "'
   }else{
     phraseText.elt.innerHTML = "Make up a new Shout It <br> Phrase!"
   }
@@ -414,7 +414,7 @@ function blankText() {
 if(lastPhrase!=""&& blankSlider.value()==blankMin){
   textSize(20);
   fill(0, 150, 150);
-  text("Last Shout It Phrase was \n '"+lastPhrase+"!'", 0.5 * width, (blankHeight+sliderHeightSpacing+.12) * height);
+  text("Last Shout It Phrase was \n '"+lastPhrase+'! "', 0.5 * width, (blankHeight+sliderHeightSpacing+.12) * height);
 }
   
 }
