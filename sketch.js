@@ -3,6 +3,7 @@
 let state = "timerReady"
 let page = "TIMER"
 let isDebug = false;
+let version = 0.18
 
 
 //bug: https://github.com/processing/p5.js-sound/issues/506
@@ -12,6 +13,7 @@ let screamSounds = []
 let failSounds = []
 let failSoundstoPlay=[]
 let phrasesArray = []
+let lastThreePhrases = []
 
 let bopItImg
 let bkgrnd01Img
@@ -26,6 +28,7 @@ let stopitButton
 let link
 let rules
 let speedSlider
+let blankSlider
 let spread
 let phraseText
 let newPhrase
@@ -34,11 +37,16 @@ let phraseIntro = "Your new Shout It phrase is <br>"
 let menuHeight
 let stopitHeight
 let phraseHeight
+let rulesHeight = .77
+let linkHeight = .85
+let blankHeight = .42
+let speedHeight = .12
+let sliderHeightSpacing = .15
 
 let timerLengthSetting
 
 function preload() {
-  print("v" + "0.17")
+  print("v" + version)
   getAudioContext().suspend();
   bopItImg = loadImage('assets/layerAssets/BopitCardGameLayer_0002.png');
   bkgrnd01Img = loadImage("assets/layerAssets/BopitCardGameLayer_0003_Layer-1.png");
@@ -47,7 +55,7 @@ function preload() {
   beatSound = loadSound("assets/Beats loop.mp3");
   cymbalSound = loadSound('assets/CymbalShort.mp3');
   phrasesArray = loadStrings('assets/ShoutItPhrases.txt');
-  print(phrasesArray)
+  //print(phrasesArray)
 
   for (let i = 0; i < 4; i++) {
     var num = i + 1
@@ -69,6 +77,8 @@ function preload() {
 
 let sliderMin = 10
 let sliderStep = 10
+let blankMin = 1
+let blankStep= 1
 function setup() {
   var cnv = createCanvas(windowWidth, windowHeight);
   cnv.mousePressed(enableSound);
@@ -80,7 +90,7 @@ function setup() {
 
   rules = createA(
     'https://www.dropbox.com/sh/azsxioxac498ih8/AACA3hckZ6Kw4Uhp-TrViLJwa?dl=0'
-  , 'Rules');
+  , 'RULES');
   rules.attribute('hidden', '')
   rules.attribute('target',)
   rules.addClass("link")
@@ -96,10 +106,12 @@ function setup() {
   stopitButton.mousePressed(OnStopItPressed)
   stopitHeight = .75
 
-  newPhrase = "gorby"
+  newPhrase = ""
+  lastPhrase = ""
   phraseText= createDiv(phraseIntro + newPhrase+" !")
   phraseText.addClass("button")
   phraseHeight = .12
+
 
   if (isDebug) {
     sliderMin = 1
@@ -110,6 +122,13 @@ function setup() {
   speedSlider.addClass("slider")
   printDebug(speedSlider)
 
+  blankSlider = createSlider(blankMin, blankMin + blankStep, blankMin + blankStep, blankStep)
+  blankSlider.addClass("slider")
+
+  //blankSlider.value() = blankMin
+  SetNewPhrase()
+  phraseText.show()
+
   amplitude = new p5.Amplitude(0.8);
   cnvScale = height / bkgrnd01Img.height
   goToTimer()
@@ -118,6 +137,7 @@ function setup() {
   timerLengthSetting = 1
   ProScaleImage(bkgrnd01Img, 1)
   speedSlider.style('width', .5 * bkgrnd01Img.width + 'px')
+  blankSlider.style('width', .5 * bkgrnd01Img.width + 'px')
   windowResized()
 }
 
@@ -148,6 +168,7 @@ function draw() {
       playScream()
       menubutton.show()
       SetNewPhrase()
+      phraseText.show()
     } else if (state == "endPhrase") {
       redFade()
     }
@@ -156,6 +177,7 @@ function draw() {
 
   } else if (page == "MENU") {
     speedText()
+    blankText()
 
   }
 
@@ -205,14 +227,15 @@ function Reset(){
 
 function SetNewPhrase(){
   //some function to set a new phrase
-
+  lastPhrase=newPhrase
+  const isGenerateRandom = blankSlider.value() == blankMin;
+  if(isGenerateRandom){
   var index = int(random(0,phrasesArray.length))
-
-  print(index)
-
   newPhrase= "' "+phrasesArray[index]
-  phraseText.elt.innerHTML=phraseIntro+newPhrase+"! '"
-  phraseText.show()
+  phraseText.elt.innerHTML = phraseIntro+newPhrase+"! '"
+  }else{
+    phraseText.elt.innerHTML = "Make up a new Shout It <br> Phrase!"
+  }
 }
 
 function HideOtherButtons(){
@@ -255,11 +278,9 @@ function stopTimer() {
 }
 
 function OnStopItPressed(){
+  if(state=="timerRunning")
+  state = "timesUp"
   stopTimer()
-  menubutton.show()
-  SetNewPhrase()
-  state = "timerReady"
-
 }
 
 function playScream() {
@@ -306,26 +327,28 @@ function goToMenu() {
   phraseText.hide()
   stopitButton.hide()
   link.removeAttribute('hidden')
-  link.position(0.5 * width, 0.8 * height)
+  link.position(0.5 * width, linkHeight * height)
   link.center('horizontal')
 
   rules.removeAttribute('hidden')
-  rules.position(0.5 * width, 0.7 * height)
+  rules.position(0.5 * width, rulesHeight * height)
   rules.center('horizontal')
 
   menubutton.elt.innerHTML = "Back"
   printDebug(menubutton)
   speedSlider.removeAttribute('hidden')
-  speedSlider.position(0.5 * width, 0.5 * height)
+  speedSlider.position(0.5 * width, (speedHeight+sliderHeightSpacing) * height)
   speedSlider.center('horizontal')
+  blankSlider.removeAttribute('hidden')
+  blankSlider.position(0.5 * width, (blankHeight+sliderHeightSpacing) * height)
+  blankSlider.center('horizontal')
 
   stopTimer();
   menubutton.mousePressed(goToTimer)
   menubutton.position(0.5 * width, menuHeight * height)
   menubutton.center('horizontal')
-
+  windowResized()
 }
-
 
 function goToTimer() {
   page = "TIMER"
@@ -334,16 +357,17 @@ function goToTimer() {
   link.attribute('hidden', '')
   rules.attribute('hidden', '')
   speedSlider.attribute('hidden', '')
+  blankSlider.attribute('hidden', '')
   printDebug(link)
   stopitButton.show()
-  SetNewPhrase()
+  phraseText.show()
   menubutton.mousePressed(goToMenu)
   menubutton.position(0.5 * width, menuHeight * height)
   menubutton.center('horizontal')
   stopitButton.mousePressed(OnStopItPressed)
   stopitButton.position(0.5 * width, stopitHeight * height)
   stopitButton.center('horizontal')
-
+  windowResized()
 }
 
 
@@ -364,10 +388,44 @@ function speedText() {
     default:
   }
 
-  fill(255);
-  text(title + '\n' + setting, 0.5 * width, 0.35 * height);
-  textSize(30)
+  ParamText(title, setting, speedHeight);
+}
+
+
+function blankText() {
+  let title = 'Shout It Phrase'
+  let setting = 'GENERATE RANDOM'
+
+  switch (blankSlider.value()) {
+    case blankMin:
+      setting = 'GENERATE RANDOM'
+      break;
+    case blankMin + blankStep:
+      setting = 'USE YOUR OWN'
+      break;
+    default:
+  }
+
+  blankSlider.input(SetNewPhrase)
+
+
+
+  ParamText(title, setting, blankHeight);
+if(lastPhrase!=""&& blankSlider.value()==blankMin){
+  textSize(20);
+  fill(0, 150, 150);
+  text("Last Shout It Phrase was \n '"+lastPhrase+"!'", 0.5 * width, (blankHeight+sliderHeightSpacing+.12) * height);
+}
+  
+}
+
+function ParamText(title, setting, hPos) {
   textAlign(CENTER, CENTER)
+  textSize(25);
+  fill(255);
+  text(title, 0.5 * width, hPos * height);
+  fill(255, 255, 0);
+  text(setting, 0.5 * width, (hPos + .06) * height);
 }
 
 function looped() {
@@ -387,12 +445,15 @@ function windowResized() {
   phraseText.center('horizontal')
   stopitButton.position(0.5 * width, stopitHeight * height);
   stopitButton.center('horizontal')
-  speedSlider.position(0.5 * width, 0.5 * height)
+  speedSlider.position(0.5 * width, (speedHeight+sliderHeightSpacing) * height)
   speedSlider.style('width', .5 * bkgrnd01Img.width + 'px')
   speedSlider.center('horizontal')
-  link.position(0.5 * width, 0.8 * height)
+  blankSlider.position(0.5 * width, (blankHeight+sliderHeightSpacing) * height)
+  blankSlider.style('width', .5 * bkgrnd01Img.width + 'px')
+  blankSlider.center('horizontal')
+  link.position(0.5 * width, linkHeight * height)
   link.center('horizontal')
-  rules.position(0.5 * width, 0.7 * height)
+  rules.position(0.5 * width, rulesHeight * height)
   rules.center('horizontal')
 }
 
