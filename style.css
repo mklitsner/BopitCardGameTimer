@@ -25,10 +25,7 @@ html,body{
 
 .rulesDiv {
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-
 }
-
-
 
 .rulesP {
   color:rgb(255, 255, 255);
@@ -47,11 +44,23 @@ canvas {
   border: none;
   color: rgb(0, 199, 189);
   opacity: 1;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 25px;
+  border-radius: 5px;
+}
+
+.bigButton {
+  background-color: #ffffff00;
+  border: none;
+  color: rgb(255, 230, 0);
+  opacity: 1;
 
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 30px;
+  font-size: 50px;
   border-radius: 5px;
 }
 

@@ -11,6 +11,7 @@ let isDebug = false;
 let screamSounds = []
 let failSounds = []
 let failSoundstoPlay=[]
+let phrasesArray = []
 
 let bopItImg
 let bkgrnd01Img
@@ -26,12 +27,18 @@ let link
 let rules
 let speedSlider
 let spread
+let phraseText
+let newPhrase
+let phraseIntro = "Your new Shout It phrase is <br>"
 
+let menuHeight
+let stopitHeight
+let phraseHeight
 
 let timerLengthSetting
 
 function preload() {
-  print("v" + "0.16")
+  print("v" + "0.17")
   getAudioContext().suspend();
   bopItImg = loadImage('assets/layerAssets/BopitCardGameLayer_0002.png');
   bkgrnd01Img = loadImage("assets/layerAssets/BopitCardGameLayer_0003_Layer-1.png");
@@ -39,6 +46,8 @@ function preload() {
   //bkgrnd03Img = loadImage('assets/layerAssets/BopitCardGameLayer_0000_Layer-4.png');
   beatSound = loadSound("assets/Beats loop.mp3");
   cymbalSound = loadSound('assets/CymbalShort.mp3');
+  phrasesArray = loadStrings('assets/ShoutItPhrases.txt');
+  print(phrasesArray)
 
   for (let i = 0; i < 4; i++) {
     var num = i + 1
@@ -80,10 +89,17 @@ function setup() {
   menubutton.addClass("button")
   menubutton.show()
   menubutton.mousePressed(goToMenu)
+  menuHeight= .9
 
   stopitButton = createButton('Stop It')
-  stopitButton.addClass("button")
-  stopitButton.mousePressed(stopItPressed)
+  stopitButton.addClass("bigButton")
+  stopitButton.mousePressed(OnStopItPressed)
+  stopitHeight = .75
+
+  newPhrase = "gorby"
+  phraseText= createDiv(phraseIntro + newPhrase+" !")
+  phraseText.addClass("button")
+  phraseHeight = .12
 
   if (isDebug) {
     sliderMin = 1
@@ -122,17 +138,18 @@ function draw() {
   if (page == "TIMER") {
 
     if (state == "timerReady") {
-      PressTimer();
+      onPressTimer();
     } else if (state == "timerRunning") {
       let level = amplitude.getLevel();
       bopitSize = map(level, 0, 1, 0.9, 1.3)
       timerRunningLooped()
-      PressTimer()
+      onPressTimer()
     } else if (state == "timesUp") {
       playScream()
     } else if (state == "endPhrase") {
       redFade()
       menubutton.show()
+
     }
 
     scaleImage(bopItImg, cnvScale * bopitSize / 2)
@@ -147,18 +164,18 @@ function draw() {
 
 let beatTime
 let waitTillNextPress=false
-function PressTimer() {
+function onPressTimer() {
   if (mouseIsPressed&&!waitTillNextPress) {
     if (dist(width / 2, height / 2, mouseX, mouseY) < eScale * cnvScale * 0.5) {
       waitTillNextPress=true
       bopItPressed()
       if (state == "timerRunning") {
         Reset()
-        HideMenu()
+        HideOtherButtons()
         printDebug("TimerRunning Press")
       } else {
         StartTimer()
-        HideMenu()
+        HideOtherButtons()
         printDebug(" NOt TimerRunning Press")
       }
     }
@@ -186,8 +203,21 @@ function Reset(){
   StartTimer()
 }
 
-function HideMenu(){
+function SetNewPhrase(){
+  //some function to set a new phrase
+
+  var index = int(random(0,phrasesArray.length))
+
+  print(index)
+
+  newPhrase= "' "+phrasesArray[index]
+  phraseText.elt.innerHTML=phraseIntro+newPhrase+"! '"
+  phraseText.show()
+}
+
+function HideOtherButtons(){
   menubutton.hide()
+  phraseText.hide()
 }
 
 let IsLooping = true
@@ -224,9 +254,10 @@ function stopTimer() {
   beatSound.stop()
 }
 
-function stopItPressed(){
-  stopTimer();
+function OnStopItPressed(){
+  stopTimer()
   menubutton.show()
+  SetNewPhrase()
   state = "timerReady"
 
 }
@@ -272,7 +303,8 @@ function goToMenu() {
   page = "MENU"
   state = "menu"
 
-  menubutton.hide()
+  phraseText.hide()
+  stopitButton.hide()
   link.removeAttribute('hidden')
   link.position(0.5 * width, 0.8 * height)
   link.center('horizontal')
@@ -281,16 +313,16 @@ function goToMenu() {
   rules.position(0.5 * width, 0.7 * height)
   rules.center('horizontal')
 
-  stopitButton.elt.innerHTML = "Back"
+  menubutton.elt.innerHTML = "Back"
   printDebug(menubutton)
   speedSlider.removeAttribute('hidden')
   speedSlider.position(0.5 * width, 0.5 * height)
   speedSlider.center('horizontal')
 
   stopTimer();
-  stopitButton.mousePressed(goToTimer)
-  stopitButton.position(0.5 * width, 0.85 * height)
-  stopitButton.center('horizontal')
+  menubutton.mousePressed(goToTimer)
+  menubutton.position(0.5 * width, menuHeight * height)
+  menubutton.center('horizontal')
 
 }
 
@@ -298,17 +330,18 @@ function goToMenu() {
 function goToTimer() {
   page = "TIMER"
   state = "timerReady"
-  stopitButton.elt.innerHTML = "Stop it"
+  menubutton.elt.innerHTML = "Menu"
   link.attribute('hidden', '')
   rules.attribute('hidden', '')
   speedSlider.attribute('hidden', '')
   printDebug(link)
-  menubutton.show()
+  stopitButton.show()
+  SetNewPhrase()
   menubutton.mousePressed(goToMenu)
-  menubutton.position(0.5 * width, 0.15 * height)
+  menubutton.position(0.5 * width, menuHeight * height)
   menubutton.center('horizontal')
-  stopitButton.mousePressed(stopItPressed)
-  stopitButton.position(0.5 * width, 0.85 * height)
+  stopitButton.mousePressed(OnStopItPressed)
+  stopitButton.position(0.5 * width, stopitHeight * height)
   stopitButton.center('horizontal')
 
 }
@@ -348,9 +381,11 @@ function enableSound() {
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
-  menubutton.position(0.5 * width, 0.15 * height);
+  menubutton.position(0.5 * width, menuHeight * height);
   menubutton.center('horizontal')
-  stopitButton.position(0.5 * width, 0.85 * height);
+  phraseText.position(0.5 * width, phraseHeight * height);
+  phraseText.center('horizontal')
+  stopitButton.position(0.5 * width, stopitHeight * height);
   stopitButton.center('horizontal')
   speedSlider.position(0.5 * width, 0.5 * height)
   speedSlider.style('width', .5 * bkgrnd01Img.width + 'px')
