@@ -146,10 +146,10 @@ function draw() {
       onPressTimer()
     } else if (state == "timesUp") {
       playScream()
+      menubutton.show()
+      SetNewPhrase()
     } else if (state == "endPhrase") {
       redFade()
-      menubutton.show()
-
     }
 
     scaleImage(bopItImg, cnvScale * bopitSize / 2)
