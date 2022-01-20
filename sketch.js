@@ -164,11 +164,6 @@ function draw() {
       bopitSize = map(level, 0, 1, 0.9, 1.3)
       timerRunningLooped()
       onPressTimer()
-    } else if (state == "timesUp") {
-      playScream()
-      menubutton.show()
-      SetNewPhrase()
-      phraseText.show()
     } else if (state == "endPhrase") {
       redFade()
     }
@@ -209,7 +204,7 @@ function mouseReleased(){
 }
 
 function StartTimer(){
-printDebug("CYmbal")
+printDebug("Cymbal")
   cymbalSound.play()
   var timerMinPerc = 0.5
   var timerMax = speedSlider.value()
@@ -268,7 +263,7 @@ function timerRunningLooped() {
     }
   }
   if (timeleft <= 0) {
-    state = "timesUp"
+    TimesUp(true)
     stopTimer()
   }
 }
@@ -279,17 +274,22 @@ function stopTimer() {
 
 function OnStopItPressed(){
   if(state=="timerRunning")
-  state = "timesUp"
+  TimesUp(false)
   stopTimer()
 }
 
-function playScream() {
+function TimesUp(bool, playPhrase) {
   state = "endPhrase"
   var num = int(Math.random() * 4)
   printDebug("scream " + num)
   screamSounds[num].play()
+  if(playPhrase){
   screamSounds[num].onended(playFailPhrase)
+  }
   fade = 255
+  menubutton.show()
+  SetNewPhrase()
+  phraseText.show()
 }
 
 function playFailPhrase() {
