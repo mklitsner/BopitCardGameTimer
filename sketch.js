@@ -3,7 +3,7 @@
 let state = "timerReady"
 let page = "TIMER"
 let isDebug = false;
-let version = 0.19
+let version = 0.20
 
 
 //bug: https://github.com/processing/p5.js-sound/issues/506
@@ -156,7 +156,7 @@ function draw() {
   let bopitSize = 1;
 
   if (page == "TIMER") {
-
+printDebug(state)
     if (state == "timerReady") {
       onPressTimer();
     } else if (state == "timerRunning") {
@@ -273,23 +273,34 @@ function stopTimer() {
 }
 
 function OnStopItPressed(){
-  if(state=="timerRunning")
+  if(state=="timerRunning"){
   TimesUp(false)
   stopTimer()
+  }
 }
 
-function TimesUp(bool, playPhrase) {
+function TimesUp(playPhrase) {
   state = "endPhrase"
   var num = int(Math.random() * 4)
   printDebug("scream " + num)
-  screamSounds[num].play()
+
   if(playPhrase){
+  screamSounds[num].play()
   screamSounds[num].onended(playFailPhrase)
+  }else{
+    screamSounds[num].play()
+    screamSounds[num].onended(TimerReady)
   }
   fade = 255
   menubutton.show()
   SetNewPhrase()
   phraseText.show()
+
+
+}
+
+function TimerReady() {
+  state = "timerReady";
 }
 
 function playFailPhrase() {
