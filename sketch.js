@@ -3,7 +3,7 @@
 let state = "timerReady"
 let page = "TIMER"
 let isDebug = false;
-let version = 0.18
+let version = 0.19
 
 
 //bug: https://github.com/processing/p5.js-sound/issues/506
